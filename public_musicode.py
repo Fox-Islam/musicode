@@ -49,6 +49,12 @@ shift = random.randint(0,24)
 print ("shift " + str(shift))
 print ("lastval " + str(lastval))
 
+#Alter instrument
+track   = 0
+channel = 0
+time    = 0
+program = 1 #MIDI instrument value range is 0-127
+MyMIDI.addProgramChange(track, channel, time, program)
 
 #PIANO
 curw = 0 #current width, height value (to iterate over image)
