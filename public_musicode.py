@@ -54,19 +54,29 @@ changekeys = 1 #set to 0 to disallow key changes in the song, or 1 to allow
 #19 for b5 (lydian)
 #20 for b2+b3+b5+b6+b7 (locrian)
 
-print ("sharps " + str(sharps))
-transpose = transpose % 12
-lastval = random.randint(0,24)
-shift = random.randint(0,24)
-print ("shift " + str(shift))
-print ("lastval " + str(lastval))
-
 ###Alter instrument
 ##track   = 0
 ##channel = 0
 ##time    = 0
 ##program = 0 #MIDI instrument value range is 0-127
 ##MyMIDI.addProgramChange(track, channel, time, program)
+autoalter = 0 #percentage chance of changing the current instrument
+              #set to 0 to keep the instrument constant
+program = 0 #starting instrument
+
+print ("sharps " + str(sharps))
+print ("change keys " + str(changekeys))
+print ("iterator " + str(iterator))
+transpose = transpose % 12
+print ("transpose " + str(transpose))
+lastval = random.randint(0,24)
+shift = random.randint(0,24)
+print ("shift " + str(shift))
+print ("lastval " + str(lastval))
+print ("auto-alter " + str(autoalter))
+print ("program " + str(program))
+
+
 
 def fixkey(pitch, sharps):
     note = ""
@@ -230,7 +240,6 @@ def addnote(pitch,sharps,chordrange):
 
 def keychange(avgsofar,sharps):
         #key change dependent on variation from average hue encountered so far
-        avgsofar = (avgsofar + n[0])/enum
         chance = (int((float(n[0])/255)*10) + int((float(avgsofar)/255)*10)) % 10
         if chance == 3 or (random.randint(0,100) > 97):
             sharps += 1
@@ -272,6 +281,12 @@ while time < h*w:
         if random.randint(1,10) > 7:
             duration = duration*2
 
+    #Alter instrument
+    if random.randint(0,100) < autoalter:
+        program = (program + random.randint(10,40)) % 127
+        MyMIDI.addProgramChange(track, channel, time, program)
+        
+    
     pitchrange = 60 #Full MIDI pitch range is 0 - 127
     minpitch = 36
     pitch = (int((float(n[0])/255) * shift)
